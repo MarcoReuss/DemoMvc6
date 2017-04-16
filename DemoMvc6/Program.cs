@@ -17,6 +17,7 @@ namespace DemoMvc6
                 .UseIISIntegration()
                 .UseStartup<Startup>()
                 .UseApplicationInsights()
+                .UseUrls("http://*:80")
                 .Build();
 
             host.Run();
