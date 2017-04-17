@@ -1,6 +1,35 @@
+@model IEnumerable<CategoryViewModel>
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
-
+<div class="container">
+    <h2>Manage Categories</h2>
+    <a href="@Url.Action("create", "home")">Create</a>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>IActive</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+           @{
+               foreach (var item in Model)
+               {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Name</td>
+                    <td>@item.IsActive</td>
+                    <td><a href="@Url.Action("edit","home", new { id = item.Id })">Edit</a></td>
+                    <td><a href="@Url.Action("delete","home", new { id = item.Id })">Delete</a></td>
+                </tr>
+               }
+        }
+        </tbody>
+    </table>
+</div>
