@@ -7,6 +7,8 @@ namespace DemoMvc6.Api
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
+    using DemoMvc6.Domain;
+    using DemoMvc6.Dto;
 
     [Route("api/Categories")]
     public class CategoriesController : Controller
@@ -17,7 +19,12 @@ namespace DemoMvc6.Api
         {
             using (var context = new DemoContext())
             {
-                return Ok(await context.Categories.FirstOrDefaultAsync(x => x.Id == id));
+                return Ok(await context.Categories.Where(x=>x.Id == id).Select(x=>new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsActive = x.IsActive
+                }).FirstOrDefaultAsync());
             }
         }
 
@@ -27,7 +34,62 @@ namespace DemoMvc6.Api
         {
             using (var context = new DemoContext())
             {
-                return Ok(await context.Categories.ToListAsync());
+                return Ok(await context.Categories.Select(x => new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsActive = x.IsActive
+                }).ToListAsync());
+            }
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<IActionResult> Post([FromBody]CategoryDto model)
+        {
+            using (var context = new DemoContext())
+            {
+                context.Categories.Add(new Category
+                {
+                    Name = model.Name,
+                    IsActive = model.IsActive
+                });
+
+                return Ok(await context.SaveChangesAsync());
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody]CategoryDto model)
+        {
+            using (var context = new DemoContext())
+            {
+                var category = await context.Categories.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+                if (category == null) return NotFound();
+
+                category.Name = model.Name;
+
+                category.IsActive = model.IsActive;
+
+                return Ok(await context.SaveChangesAsync());
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            using (var context = new DemoContext())
+            {
+                var category = await context.Categories.FindAsync(id);
+
+                if (category == null) return NotFound();
+
+                context.Entry(category).State = EntityState.Deleted;
+
+                return Ok(await context.SaveChangesAsync());
             }
         }
     }
