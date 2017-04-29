@@ -1,1 +1,1 @@
-﻿// Write your Javascript code.
+﻿var app = function () { }();

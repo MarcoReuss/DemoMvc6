@@ -280,3 +280,5 @@ __pycache__/
 /Blog/appsettings.Development.json
 /Blog/Logs
 /Blog/wwwroot/uploads
+/DemoMvc6/bower_components
+/DemoMvc6/wwwroot/lib
